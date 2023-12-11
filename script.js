@@ -1,187 +1,147 @@
-// Simular el portal de un profesor de escuela
-// Vean el concepto clases a futuro para mejorar esto
+// Simulador de costos
 
+//una variable para guardar y mostrar los productos
 const datos = {
-    usuario: "andres",
-    contrasenia:"123",
-    ingreso: false,
-    alumnos: []
+    productos: []
 }
 
-function login( intentos, maximaCantidadIntentos){
-    // valida usuario/contrasenia
-    alert(`Tiene ${maximaCantidadIntentos} intentos posibles de ingresar, este es su intento ${intentos+1}`)
-    let profesorIngresado = prompt("Ingrese su nombre")
-    let profesorLower = profesorIngresado.toLocaleLowerCase()
-    let constraseniaIngresada = prompt("ingrese la contrasenia")
-    if((datos.usuario === profesorLower)&&(datos.contrasenia === constraseniaIngresada)){
-        alert("Bienvenido")
-        datos.ingreso=true
-        return true
+
+
+//----AREA de FUNCIONES-----
+
+
+// funcion que muestra los productos
+function mostrarProducto() {
+    if (datos.productos.length > 0) {
+        alert("Tu lista de productos cargados:\n" + datos.productos.map(producto => producto.nombre).join('\n'));
     } else {
-        alert(`Le quedan ${maximaCantidadIntentos-(intentos+1)} intentos`)
+        alert("No hay productos almacenados.");
     }
 }
-
-function loginLoop(intentos, maximaCantidadIntentos){
-    // ciclo que maneja la cantidad de veces que se puede realziar el login
-    do{
-        if(login(intentos, maximaCantidadIntentos)){
-            break //frena el loop si ingresa, asi tienen un ejemplo de break
-        } 
-        intentos++
-    } while(intentos < maximaCantidadIntentos)
-}
-function agregarAlumnos(){
-    // agrega alumnos al array de datos
-    let agregarAlumno = true
-    while (agregarAlumno){
-        // valido nombre (podría modularizarlo en función aparte)
-        let nombreAlumno = prompt("Ingrese el nombre del alumno a ingresar").toLowerCase()
-        while (!nombreAlumno){
-            nombreAlumno = prompt("Hubo un error. Ingrese el nombre del alumno a ingresar").toLowerCase()
+// funcion que agrega los productos
+function agregarProducto() {
+    let agregarProducto = true;
+    while (agregarProducto) {
+        let productonombre = prompt("Ingresa el nombre del Producto nuevo, por favor.").toLowerCase();
+        while (!productonombre) {
+            productonombre = prompt("Hiciste algo mal, ¿cómo era el nombre del producto?").toLowerCase();
         }
-        // valido nomta (podría modularizarlo en función aparte)
-        let notaAlumno = Number(prompt(`Ingrese la nota del alumno ${nombreAlumno}. Un número entre 1 y 10`))
-        let notaNoValidada = true
-        do{
-            if(isNaN(notaAlumno)){
-                notaAlumno = Number(prompt("Por favor ingrese un número"))
-            } else if(nombreAlumno < 1 || notaAlumno > 10){
-                notaAlumno = Number(prompt("El número ingresado debería de ser entre 1 y 10"))
-            } else {
-                notaNoValidada = false
-            }
-        } while (notaNoValidada)
-        // creo un objeto alumno
-        const alumno = {
-            nombre: nombreAlumno,
-            nota: notaAlumno
-        }
-        // Lo agrego al array
-        datos.alumnos.push(alumno)
-        agregarAlumno = confirm("¿Desea agregar otro alumno?")
+        let productonuevo = { nombre: productonombre };
+        datos.productos.push(productonuevo);
+        alert(`LISTO, el producto "${productonombre}" ya fue cargado exitosamente.`);
+        agregarProducto = confirm("¿Quieres agregar otro producto?");
     }
 }
+// funcion para el menu para calcular los precios
+function calcularPrecio() {
+    const opcion = prompt("Selecciona una opción:\n 1 - Poner precio a productos guardados\n 2 - Agregar nuevo producto con precio propio\n ATENCION\n \n Por el momento solo está disponible la opción `2`. Cualquier otro número dará error. Muchas gracias");
 
-function calcularPromedio (){
-    // calcula el promedio de todos los alumnos
-    let sumaTotal = 0
-    let aprobados = 0
-    for(alumno of datos.alumnos){
-        sumaTotal += alumno.nota
-        if(alumno.nota >= 7){
-            aprobados++
-        }
-    }
-    const promedio = sumaTotal/datos.alumnos.length
-    alert(`El promedio de los alumnos es de ${promedio}. De los ${datos.alumnos.length} alumnos, ${aprobados} aprobaron y ${datos.alumnos.length - aprobados} desaprobaron.`)
-    return promedio
-}
-
-function mostrarAlumnos(){
-    let textolistaAlumnos = `Hay un total de ${datos.alumnos.length} alumnos: `
-    for(let i = 0; i < datos.alumnos.length ; i++){
-        textolistaAlumnos += `\n ${i+1} - ${datos.alumnos[i].nombre} | Nota: ${datos.alumnos[i].nota}`
-    }
-    alert(textolistaAlumnos)
-}
-
-const examen = ()=>{
-    // Función que toma un examen al alumno
-    alert("Bienvenido al exámen de matemáticas")
-    let nota = 0
-    const corrector = (num1, num2, operacion, rtaAlumno)=>{
-        switch(operacion){
-            case "+":
-                if(num1+num2===rtaAlumno) {
-                    nota += 2
-                }
-                break
-            case "-":
-                if(num1-num2===rtaAlumno) {
-                    nota += 2
-                }
-                break
-            case "*":
-                if(num1*num2===rtaAlumno) {
-                    nota += 2
-                }
-                break
-            case "/":
-                if(num1/num2===rtaAlumno) {
-                    nota += 2
-                }
-            default: console.log("ERROR")
-        }
-        
-    }
-    // esto puede ser su propia funcion que llamo 5 veces
-    let preg1 = Number(prompt("Cuánto es 5*8"))
-    corrector(5,8, "*", preg1)
-    let preg2 = Number(prompt("Cuánto es 3+4"))
-    corrector(3,4, "+", preg2)
-    let preg3 = Number(prompt("Cuánto es 13*2"))
-    corrector(13,2, "*", preg3)
-    let preg4 = Number(prompt("Cuánto es 100/4"))
-    corrector(100,4, "/", preg4)
-    let preg5 = Number(prompt("Cuánto es 10-3"))
-    corrector(10,3, "-", preg5)
-
-    alert(`Su nota es: ${nota}/10`)
-    return nota
-}
-
-
-
-const preguntaSeleccion=()=>{
-    // Funcion con lista de opciones y devuelve la selección elegida
-    let eleccion = prompt("Que desea hacer: \n 1 - Mostrar alumnos \n 2 - Agregar alumnos \n 3 - Calcular promedio \n 4 - Tomar un examen \n Por favor ingrese el número del proceso seleccionado.")
-    return parseInt(eleccion)
-}
-
-const selector=(eleccion)=>{
-    switch(eleccion){
-        case 1:
-            // Mostrar alumnos
-            mostrarAlumnos()
-            break
-        case 2:
-            // Agregar alumnos
-            agregarAlumnos()
-            break
-        case 3:
-            // calcular promedio
-            calcularPromedio()
-            break
-        case 4:
-            // tomar un examen
-            examen()
-            break
+    switch (opcion) {
+        case "1":
+            ponerPrecioAProductos();
+            break;
+        case "2":
+            agregarProductoConPrecio();
+            break;
         default:
-            alert("ingreso un valor inválido")
+            alert("Opción inválida. Reinicia el programa.");
     }
 }
+// case 1
+function ponerPrecioAProductos() {
+    if (datos.productos.length > 0) {
+        for (let i = 0; i < datos.productos.length; i++) {
+            const producto = datos.productos[i];
+            const nuevoPrecio = parseFloat(prompt(`Ingresa el precio para el producto "${producto.nombre}":`));
 
-const inicializar = ()=>{
-    let intentos = 0
-    const maximaCantidadDeIntentos = 3
-    do{
-        login(intentos, maximaCantidadDeIntentos)
-        if(datos.ingreso){
-            // break
-            intentos=5
+            if (!isNaN(nuevoPrecio)) {
+                const precioConIVA = calcularPrecioConIVA(nuevoPrecio);
+                const precioParaPublico = calcularPrecioPublico(precioConIVA, 0.25);
+
+                alert(`Nuevo precio para el producto "${producto.nombre}": $${nuevoPrecio}\nPrecio + IVA: $${precioConIVA}\nPrecio para el público: $${precioParaPublico}`);
+            } 
+            else {
+                alert(`Precio ingresado inválido para el producto "${producto.nombre}".`);
+            }
         }
-        intentos++
-    } while(intentos<3)
-
-    if(datos.ingreso){
-        let loop = true
-        do{
-            selector(preguntaSeleccion())
-            loop = confirm("¿Desea continuar?")
-        } while(loop)
+    } 
+    else {
+        alert("No hay productos almacenados. Agrega productos antes de ponerles precio.");
     }
 }
+
+// case 2 
+function agregarProductoConPrecio() {
+    let productonombre = prompt("PRIMERO\n Danos el nombre del producto:").toLowerCase();
+    while (!productonombre) {
+        productonombre = prompt("Hiciste algo mal. ¿Cómo era el nombre del producto?").toLowerCase();
+    }
+    const precioProducto = parseFloat(prompt(`Ingresa el precio para el producto "${productonombre}":`));
+    if (!isNaN(precioProducto)) {
+        const precioConIVA = calcularPrecioConIVA(precioProducto);
+        const precioParaPublico = calcularPrecioPublico(precioConIVA, 0.25); // 0.25 es el 25%
+
+        alert(`Precio del producto "${productonombre}": $${precioProducto}\nPrecio + IVA: $${precioConIVA}\nPrecio para el público: $${precioParaPublico}`);
+    } else {
+        alert("Precio ingresado inválido. Reinicia el programa e intenta de nuevo.");
+    }
+}
+// mini funciones que me ayudan para el case 1 y 2
+function calcularPrecioConIVA(precioBase) {
+    const iva = 0.21;
+    return precioBase * (1 + iva);
+}
+
+function calcularGananciaRecomendada(precioConIVA) {
+    const porcentajeGananciaRecomendada = 0.25;
+    return precioConIVA * porcentajeGananciaRecomendada;
+}
+
+function calcularPrecioPublico(precioConIVA, porcentajeGananciaRecomendada) {
+    const precioParaPublico = precioConIVA + calcularGananciaRecomendada(precioConIVA);
+    return precioParaPublico;
+}
+// fin de mini funciones que me ayudan para el case 1 y 2
+
+//                                              ---EL INICIADOR DEL DE CODIGO---
+const inicializar = () => {
+    let continuar = true;
+    const decision = confirm("Buenos días, campeón!!.");
+    while (continuar) {
+        const decision = confirm("¿Quieres entrar al menú?\n- Haz clic en 'Aceptar'.\n- Si estás cansado y quieres cerrar el programa, pulsa 'Cancelar'");
+
+        if (decision) {
+            const eleccion = preguntaSeleccion();
+            selector(eleccion);
+        } else {
+            alert("Apretaste 'Cancelar'. Anda a dormir mejor.");
+            break;
+        }
+
+        continuar = confirm("¿Quieres realizar otra acción?");
+    }
+};
+
+// -MI MENU-
+const preguntaSeleccion = () => {
+    let eleccion = prompt("\nCALCULADORA DE PRECIOS\n-------------------\nElige la opción que prefieras:\n\n1 - Mostrar productos almacenados\n2 - Agregar productos\n3 - Realizar cuenta + recomendación de costo\nEs imprescindible que respondas con un número.");
+    return parseInt(eleccion);
+};
+
+const selector = (eleccion) => {
+    switch (eleccion) {
+        case 1:
+            mostrarProducto();
+            break;
+        case 2:
+            agregarProducto();
+            break;
+        case 3:
+            calcularPrecio();
+            break;
+        default:
+            alert("Elegiste un dato inválido. ¡Arruinaste el programa! Reinicia.");
+    }
+};
 
 inicializar()
